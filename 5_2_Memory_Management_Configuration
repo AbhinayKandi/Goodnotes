@@ -1,0 +1,55 @@
+Memory Management and Configuration:
+
+Question. Design a memory tuning strategy for executors and drivers ?
+
+> In order to process the large datasets efficiently in PySpark, I would carefully tune memory settings for executors and the driver, considering data scale and potential challenges like skewed data. Below is a detailed plan:
+
+1. Driver Memory - Stores metadata of the job and retruns the final dataset back to the user; so i would allocate sufficient memory depending on the datset being processed, typically around 4GB-8GB for small-to-medium jobs and 12GB-16GB for large jobs.
+2. Executor Memory - As each executor processes a portion of data and each core of the executor processes a partiiton of data. I would allocate each core of the executor 4 * the partition size. By this calculation each executor would be assigned memory for each core * number of cores. Number of cores are chosen based on the parallelism required. Unified Memory Manager is the memory management used by Spark.
+3. Dynamic Allocation -  By default dynamic memory allocation would be disabled; I would enable to optimize the resource usage for varying workloads.
+4. Memory-Overhead - Thumb Rule - Spark sssigns 10% or 384MB which ever is higher to memoryoverhead. used for JVM overhead.
+
+
+Question. Document memory allocation calculations for different data scales (100GB, 500GB, 1TB)?
+
+> I would first check how many partiions would be required to process the input data. By default 128MB is the size of the partition; so 1GB data would be read in 8 partitions. 
+1GB - 1024MB / 128 MB = 8 partitions = number of CPU cores
+Assuming cores per executor = 4
+Total number of executors = 8 partitions / 4 cores per executor = 2 executors
+Thumb rule - Assign Each core 4 times the memory of each partition size.
+Each core memory= 4*128MB = 512MB on the minimum.
+total executor memory = 4 * each core memory = 4 * 512 MB = 2GB
+To process 1GB data it would take 2 executors with 4 cores each to process 1GB data in parallel. 
+
+Applying the above principle to the below input sizes:
+
+100GB- 8 * 100 - 800 partitions 
+500GB- 8 * 500 - 4000 partitions
+1TB-  8 * 1000 - 8000 partitions
+partitions = number of CPU cores
+
+Executors: I would assign 4 cores per executor
+Each executor memory = 4 * each core memory = 4 * 512 = 2GB
+
+100GB- 800 partitions
+we need 200 executors
+Executor memory: 200 * 2 GB = 400 GB
+
+
+500GB- 4000 partitions
+We need 1000 executors
+Executor memory: 1000 * 2 GB = 2 TB
+
+
+1TB- 8000 partitions
+We need 2000 executors
+Executor memory: 2000 * 2 GB = 4 TB
+
+
+Based on above configuraions, It would take same amount of time to process 1GB,100GB,500GB and 1TB as the partitions are processed in parallel.
+If the data can be processed with some delay we can decrase the number of executors which increases the runtime.
+Assuming that spark is running in cluster mode we can assign the driver memory to be 4GB-8GB depending on the use case. Usually driver memory is same as worker node memory. Be cautious of the overhead memory; spark assigns 10% or 384 MB of total container memory to overhead memory.
+.
+
+Question. [Optional]: Implement safeguards against OOM errors for skewed data:
+> Large shuffles during groupBy, join, or aggregate operations can lead to OOM errors - so I would broadcast the small table if possible, increase shuffle partitions, Enable AQE and use Bucketing and Salting to address Skewness. Also checkpointing avoid large lineage graphs and recomputation - checkointing saves results to disk.
