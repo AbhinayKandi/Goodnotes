@@ -53,3 +53,7 @@ Assuming that spark is running in cluster mode we can assign the driver memory t
 
 Question. [Optional]: Implement safeguards against OOM errors for skewed data:
 > Large shuffles during groupBy, join, or aggregate operations can lead to OOM errors - so I would broadcast the small table if possible, increase shuffle partitions, Enable AQE and use Bucketing and Salting to address Skewness. Also checkpointing avoid large lineage graphs and recomputation - checkointing saves results to disk.
+
+
+
+

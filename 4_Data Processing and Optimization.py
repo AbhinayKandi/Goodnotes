@@ -68,7 +68,7 @@ user_metadata_df.select(spark_partition_id().alias('partition_id')).groupBy(col(
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC Diaabling AQE and other optimizations to see how the join performs on 2 large datasets.
+# MAGIC Disabling AQE to see how the join performs on 2 large datasets.
 
 # COMMAND ----------
 

@@ -92,7 +92,7 @@ def generate_user_metadata(num_records):
         ])
     return data
 
-# Create directory in DBFS
+# Create directory in DBFS - S3
 dbutils.fs.mkdirs("/mnt/persistent/Goodnotes/input/csv")
 dbutils.fs.mkdirs("/mnt/persistent/Goodnotes/input/parquet")
 
@@ -111,7 +111,8 @@ user_interactions_df = spark.createDataFrame(user_interactions_data, schema=user
 # Add a new column for the date part of the timestamp
 user_interactions_df = user_interactions_df.withColumn("date", to_date(col("timestamp")).cast(StringType()))
 
-user_interactions_df.write.partitionBy("date").mode('overwrite').option("compression", "snappy").parquet("/mnt/persistent/Goodnotes/input/parquet/user_interactions")
+user_interactions_df.write.coalesce(50).partitionBy("date").mode('overwrite').option("compression", "snappy").parquet("/mnt/persistent/Goodnotes/input/parquet/user_interactions")
+
 user_interactions_df.write.partitionBy("date").mode('overwrite').csv("/mnt/persistent/Goodnotes/input/csv/user_interactions")
 
 # Generate user metadata
@@ -124,7 +125,9 @@ user_metadata_schema = StructType([
     StructField("subscription_type", StringType(), True)
 ])
 user_metadata_df = spark.createDataFrame(user_metadata_data, schema=user_metadata_schema)
-user_metadata_df.write.partitionBy("country").mode('overwrite').option("compression", "snappy").parquet("/mnt/persistent/Goodnotes/input/parquet/user_metadata")
+
+user_metadata_df.write.coalesce(20).partitionBy("country").mode('overwrite').option("compression", "snappy").parquet("/mnt/persistent/Goodnotes/input/parquet/user_metadata")
+
 user_metadata_df.write.partitionBy("country").mode('overwrite').csv("/mnt/persistent/Goodnotes/input/csv/user_metadata")
 
 print("Sample datasets generated and partitioned successfully.")

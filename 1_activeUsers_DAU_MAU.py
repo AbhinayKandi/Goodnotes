@@ -39,7 +39,7 @@ user_interactions_df = spark.read.format("csv").option("header", True).schema(sc
 
 # COMMAND ----------
 
-user_interaction.rdd.getNumPartitions()
+user_interactions_df.rdd.getNumPartitions()
 
 # COMMAND ----------
 
