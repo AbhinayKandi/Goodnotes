@@ -42,4 +42,7 @@ To process 1GB data it would take 2 executors with 4 cores each to process 1GB d
 
 Based on the above calculations, test the job for vasrying loads such as 100GB, 500GB, 1TB. Also use different configurations to find the optimal performance based on the business requirements. 
 
-Conclusion : Adaptive Query Execution and tuning shuffle partitions typically reduce execution time
+Optimization Tips:
+CPU Utlization: If low, increase the number of partitions/tasks.
+Memory Utlization: Reduce caching or increase executor memory.
+Disk I/O: Tune partitioning and increase memory allocation to reduce disk spillage.
