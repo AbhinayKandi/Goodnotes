@@ -1,0 +1,15 @@
+Data quality:
+I define Data quality in the 6 dimensions of accuracy, completeness, consistency, timeliness, validity, and uniqueness.
+Accuracy - Ensures data values are correct and represent busniness values.
+Completeness: Ensures required values are present.
+Consistency: Ensures data across columns and datasets align logically.
+Timeliness: Ensure job completes on time and also data is uo-to-date.
+Validity: Ensures data conforms to the required format or standards.
+uniqueness: Ensures no duplicates records exist in the dataset.
+
+Error handling:
+Error Handling can be comprised of the following:
+1) Data Loading Errors: Log and handle erros during ingestion.
+2) Data Validation Errors: Collect invalid records into a separate file for auditing or correction.
+3) handling Missing Data: Use default values or impute missing fields when feasible.
+4) logging: uSe centralised logging System like CloudWatch to monitor job execution and identify data Issues.
