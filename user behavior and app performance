@@ -1,0 +1,7 @@
+Using the random generated datasets, the goal is to analyze and understand user behavior and app performance. Below are some insights and their corresponding PySpark implementations:
+
+Daily Active Users - There are 634485 Users who have maintained a daily streak for the year 2024. The calculation is calculated as the person logins on consecutive days then it is counted as 1 else 0 and finally it is summed up.
+Monthly Active Users - There are 0 Users who have logged in every month for the year 2024.
+Session Based Metrics: The highest average session was close to 30 mins with 2 actions performed during the session.
+
+Furthermore analysis like User retrntion, most popular actions, subscription insights, activity trends by time of day, app version analysis, outlier detection -  low/high duration_ms values, etc can be done.
