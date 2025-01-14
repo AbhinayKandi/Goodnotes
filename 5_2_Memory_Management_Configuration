@@ -33,17 +33,17 @@ Each executor memory = 4 * each core memory = 4 * 512 = 2GB
 
 100GB- 800 partitions
 we need 200 executors
-Executor memory: 200 * 2 GB = 400 GB
+Executor memory: 200 * 2 GB = 400 GB minimum memory
 
 
 500GB- 4000 partitions
 We need 1000 executors
-Executor memory: 1000 * 2 GB = 2 TB
+Executor memory: 1000 * 2 GB = 2 TB minimum memory
 
 
 1TB- 8000 partitions
 We need 2000 executors
-Executor memory: 2000 * 2 GB = 4 TB
+Executor memory: 2000 * 2 GB = 4 TB minimum memory
 
 
 Based on above configuraions, It would take same amount of time to process 1GB,100GB,500GB and 1TB as the partitions are processed in parallel.
