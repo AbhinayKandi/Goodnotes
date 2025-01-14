@@ -1,0 +1,45 @@
+Parallelism and Resource Utilization:
+
+In general we optimize resource utilization to balance performance and cost. Below is the detailed plan:
+
+> Optimal parallelism based on data volume and cluster resources:
+
+Optimal parallelism ensures that tasks are neither underutilized nor overloaded. It depends on the cluster size and the dataset's characteristics.
+Assuming the default partition size is 128MB and there are 4 cores per executor.
+It would take 8000 partitions to read 1TB of data.
+Based on the assumption we will require 2000 executors in our cluster.
+The total Executor memory would be 2000 * 2 GB = 4 TB to process 1 TB data in parallel. This is how optimal parallelism is achieved.
+
+> Dynamic partition tuning:
+
+Dynamic partitioning adjusts the partition size based on the cluster resources and data distribution. Enabling AQE will assist in this.
+Dynamic Partition Pruning = Predicate Pushdown + Partition pruning + Broadcast Join
+
+Dynamic Partition pruning will work if:
+1. Data is partitioned.
+2. If there is a join operation performed; the small table should be broadcasted.
+
+>  Configuration Recommendations:
+Number of executors = Total Cores in cluster/Cores per cluster 
+Cores per executor = spark's recommendation is 4-5 cores per executor for parallelism and performance efficiency.
+Total Executor Memory = Total executors in cluster * memory per executor
+Memory settings = Total Executor Memory + Reserved Memory 
+Both Driver and Executor Memory are split into Overhead and java heap memory where java heap is split into Reserved memory, User Memory, Spark memory. Spark memory is further split into Storgae and Memory pool.
+Eg: If 11 GB is assigned to container. 1% which is 1 GB is assigned as overhead memory and 10GB as java heap memory. 40% is assigned to user memory and 60% to spark and reserve memory (300-450 MB)
+
+> Shuffle partitons:
+by default, Shuffle partitions are 200 but we can increse or decrease based on the dataset. For 1Tb data, we may have to increase the shuffle partitions.
+
+> [Optional]: Include benchmarks comparing different configurations.
+eg: Below are the configurations to processs 1GB data in parallel.
+1GB - 1024MB / 128 MB = 8 partitions = number of CPU cores
+Assuming cores per executor = 4
+Total number of executors = 8 partitions / 4 cores per executor = 2 executors
+Thumb rule - Assign Each core 4 times the memory of each partition size.
+Each core memory= 4*128MB = 512MB on the minimum.
+total executor memory = 4 * each core memory = 4 * 512 MB = 2GB
+To process 1GB data it would take 2 executors with 4 cores each to process 1GB data in parallel. 
+
+Based on the above calculations, test the job for vasrying loads such as 100GB, 500GB, 1TB. Also use different configurations to find the optimal performance based on the business requirements. 
+
+Conclusion : Adaptive Query Execution and tuning shuffle partitions typically reduce execution time
