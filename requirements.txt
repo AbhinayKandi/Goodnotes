@@ -1,0 +1,3 @@
+I've implemented the project on Databricks premium subscription costing me around 15$. 
+You would have to configure the resources(Driver/Executors) and the cost is based on DPU (Databricks Processing Unit) according to the resources allocated.
+Spark session is automatically created once the cluster is up and running. Imtermediate knowedge of Python and extensive working knowledge of Spark and AWS is requried for the project.
